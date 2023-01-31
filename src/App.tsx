@@ -7,7 +7,7 @@ import { Storestate } from './reducers';
 import { DefaultTodoState } from './reducers/todo.reducer';
 import { ActionTypes } from './actions/types';
 
-type ListProps = { title: string; id: number; handleDelete: any };
+type ListProps = { title: string; id: number; handleDelete(): void };
 
 const TodoList = ({ title, id, handleDelete }: ListProps): JSX.Element => (
   <li key={id}>
@@ -44,6 +44,10 @@ const App = (props: AppProp): JSX.Element => {
     props.fetchTodos(ActionTypes.fetchTodos);
   };
 
+  const onDelete = (id: number): void => {
+    props.deleteTodos(id);
+  };
+
   return (
     <div className="App">
       <div>
@@ -52,7 +56,7 @@ const App = (props: AppProp): JSX.Element => {
         ) : (
           <ul>
             {props.data.map((content: DataResponse) => (
-              <TodoList title={content.title} id={content.id} handleDelete={() => props.deleteTodos(content.id)} />
+              <TodoList title={content.title} id={content.id} handleDelete={() => onDelete(content.id)} />
             ))}
           </ul>
         )}
