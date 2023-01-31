@@ -19,7 +19,7 @@ const TodoList = ({ title, id, handleDelete }: ListProps): JSX.Element => (
 interface AppProp {
   // color?: string;
   data: DataResponse[];
-  fetchTodos: Function;
+  fetchTodos: Function; // issue with type definition for redux thunk
   loading: boolean;
   deleteTodos: typeof deleteTodos;
 }
