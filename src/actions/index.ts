@@ -8,7 +8,7 @@ export interface DataResponse {
   //   id: number;
   //   title: string;
   //   completed: boolean;
-  [x: string]: number | string | string[] | number[] | any;
+  [x: string]: number | string | string[] | number[] | any; // could have just been type any
 }
 
 /** this interface is meant to describe the object passed to the dispatch action in the fetchTodos function */
