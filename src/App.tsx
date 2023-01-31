@@ -1,26 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { DataResponse, fetchTodos, deleteTodos, DeleteTodosAction } from './actions';
+import { connect } from 'react-redux';
+import { Storestate } from './reducers';
+import { DefaultTodoState } from './reducers/todo.reducer';
+import { ActionTypes } from './actions/types';
 
-function App() {
+type ListProps = { title: string; id: number; handleDelete: any };
+
+const TodoList = ({ title, id, handleDelete }: ListProps): JSX.Element => (
+  <li key={id}>
+    <span>{title}</span>
+    <span onClick={handleDelete}>X</span>
+  </li>
+);
+
+interface AppProp {
+  // color?: string;
+  data: DataResponse[];
+  fetchTodos: Function;
+  loading: boolean;
+  deleteTodos: typeof deleteTodos;
+}
+type AppProps = { color?: string };
+
+const App = (props: AppProp): JSX.Element => {
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    props.fetchTodos(ActionTypes.fetchTodos);
+  }, []);
+
+  const onIncrement = (): void => {
+    setCounter(counter + 1);
+  };
+
+  const onDecrement = (): void => {
+    setCounter(counter - 1);
+  };
+
+  const handleFetchTodos = (): void => {
+    props.fetchTodos(ActionTypes.fetchTodos);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+        {props.loading ? (
+          <span>loading...</span>
+        ) : (
+          <ul>
+            {props.data.map((content: DataResponse) => (
+              <TodoList title={content.title} id={content.id} handleDelete={() => props.deleteTodos(content.id)} />
+            ))}
+          </ul>
+        )}
+      </div>
+      <button onClick={onIncrement}>Increment</button>
+      <button onClick={onDecrement}>Decrement</button>
+      <button onClick={handleFetchTodos}>fetch todos</button>
+      {counter}
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state: Storestate): DefaultTodoState => ({
+  data: state.todos.data,
+  loading: state.todos.loading,
+  error: state.todos.error,
+});
+
+export default connect(mapStateToProps, { fetchTodos, deleteTodos })(App);
